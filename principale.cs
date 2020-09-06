@@ -146,15 +146,21 @@ namespace TextToSpeech
             for (string old = null; old != tts;)
             {
                 old = tts;
-                tts = tts.Replace(" .", ".").Replace(". ", ".");
+                tts = tts.Replace(" .", ".");
+            }
+            for (string old = null; old != tts;)
+            {
+                old = tts;
+                tts = tts.Replace(". ", ".");
             }
 
             for (string old = null; old != tts;)
             {
                 old = tts;
-                tts = tts.Replace("..", ".").Replace(".\".", ".\"").Replace(".'.", ".'").Replace(".«.", ".«").Replace(".».", ".»");
+                tts = tts.Replace("..", ".");
             }
 
+            tts = tts.Replace(".\".", ".\"").Replace(".«.", ".«").Replace(".».", ".»");
             tts = tts.Replace(".", ". ").Trim();
 
             List<string> ttsList = new List<string>();
