@@ -138,7 +138,7 @@ namespace TextToSpeech
                 fnom = fnom.Substring(0, fnom.Length - ".MP3".Length);
 
             string authorisation = getAuthorisation();
-            string tts = txtTexte.Text.Replace("\r\n", "\n").Replace("\n\n", ".").Replace("\n", " ").Trim();
+            string tts = txtTexte.Text.Replace("\r\n", "\n").Replace("\n\n", ".").Replace("\n", " ").Replace(".", ". ").Trim();
 
             List<string> ttsList = new List<string>();
             while(tts != "")
