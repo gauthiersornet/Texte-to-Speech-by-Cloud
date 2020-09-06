@@ -125,6 +125,29 @@ namespace TextToSpeech
 
             return Convert.FromBase64String(responseString);
         }
+        
+        private string ReplaceAll(string str, string from, string to)
+        {
+            for (string old = null; old != str;)
+            {
+                old = str;
+                str = str.Replace(from, to);
+            }
+            return str;
+        }
+
+        private string ManyToOne(string str, string tg)
+        {
+            str = ReplaceAll(str, " " + tg, tg);
+            str = ReplaceAll(str, tg + " ", tg);
+            str = ReplaceAll(str, tg+ tg, tg);
+            return str;
+        }
+
+        private string ManySplit(string str, string tg)
+        {
+            return str.Replace(tg + "\".", tg + "\"").Replace(tg + "«.", tg + "«").Replace(tg + "».", tg + "»").Replace(tg, tg + " ");
+        }
 
         private void btProcessTTS_Click(object sender, EventArgs e)
         {
@@ -143,25 +166,20 @@ namespace TextToSpeech
                 .Replace("\n\n", ".")
                 .Replace("\n", " ");
 
-            for (string old = null; old != tts;)
-            {
-                old = tts;
-                tts = tts.Replace(" .", ".");
-            }
-            for (string old = null; old != tts;)
-            {
-                old = tts;
-                tts = tts.Replace(". ", ".");
-            }
+            tts = ManyToOne(tts, ".");
+            tts = ManyToOne(tts, "?");
+            tts = ManyToOne(tts, "!");
+            tts = ManyToOne(tts, ";");
+            tts = ManyToOne(tts, ":");
+            tts = ManyToOne(tts, ",");
 
-            for (string old = null; old != tts;)
-            {
-                old = tts;
-                tts = tts.Replace("..", ".");
-            }
-
-            tts = tts.Replace(".\".", ".\"").Replace(".«.", ".«").Replace(".».", ".»");
-            tts = tts.Replace(".", ". ").Trim();
+            tts = ManySplit(tts, ".");
+            tts = ManySplit(tts, "?");
+            tts = ManySplit(tts, "!");
+            tts = ManySplit(tts, ";");
+            tts = ManySplit(tts, ":");
+            tts = ManySplit(tts, ",");
+            tts = tts.Trim();
 
             List<string> ttsList = new List<string>();
             while(tts != "")
