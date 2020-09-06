@@ -85,6 +85,7 @@
             // 
             this.txtTexte.Location = new System.Drawing.Point(11, 30);
             this.txtTexte.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtTexte.MaxLength = 1000000;
             this.txtTexte.Multiline = true;
             this.txtTexte.Name = "txtTexte";
             this.txtTexte.ScrollBars = System.Windows.Forms.ScrollBars.Both;
