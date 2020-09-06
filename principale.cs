@@ -152,7 +152,7 @@ namespace TextToSpeech
             for (string old = null; old != tts;)
             {
                 old = tts;
-                tts = tts.Replace("..", ".");
+                tts = tts.Replace("..", ".").Replace(".\".", ".\"").Replace(".'.", ".'").Replace(".«.", ".«").Replace(".».", ".»");
             }
 
             tts = tts.Replace(".", ". ").Trim();
