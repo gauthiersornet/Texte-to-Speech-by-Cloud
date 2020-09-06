@@ -146,7 +146,7 @@ namespace TextToSpeech
 
         private string ManySplit(string str, string tg)
         {
-            return str.Replace(tg + "\".", tg + "\"").Replace(tg + "«.", tg + "«").Replace(tg + "».", tg + "»").Replace(tg, tg + " ");
+            return str.Replace(tg + "\".", tg + "\"").Replace(tg + "«.", tg + "«").Replace(tg + "».", tg + "»").Replace(tg + ".", tg).Replace(tg, tg + " ");
         }
 
         private void btProcessTTS_Click(object sender, EventArgs e)
