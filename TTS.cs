@@ -44,7 +44,7 @@ namespace TextToSpeech
             if(eCloud == ECloud.Azure)
             {
                 SpeechConfig speechConfig = SpeechConfig.FromSubscription(authKey, "francecentral");
-                speechConfig.SpeechSynthesisLanguage = "fr-FR";
+                speechConfig.SpeechSynthesisLanguage = _languageCode;
                 speechConfig.SetSpeechSynthesisOutputFormat(SpeechSynthesisOutputFormat.Audio48Khz96KBitRateMonoMp3);
                 //AudioConfig audioConfig = AudioConfig.;
                 //AudioProcessingOptions audioProcessingOptions = null;
