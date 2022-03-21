@@ -12,11 +12,16 @@ using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.CognitiveServices.Speech;
+using Microsoft.CognitiveServices.Speech.Audio;
 
 namespace TextToSpeech
 {
     public partial class principale : Form
     {
+        //Pour google : txtGCloud.Text = "C:/Users/{USER}/AppData/Local/Google/Cloud SDK/google-cloud-sdk/bin/gcloud.cmd"
+        //Pour Azure : {Azure speech Key}
+
         private const int nbMaxCaractères = 4950;
 
         Dictionary<string, string[]> lstLangues = new Dictionary<string, string[]>();
@@ -41,6 +46,8 @@ namespace TextToSpeech
             foreach (KeyValuePair<string, string[]> kv in lstLangues)
                 cbLangue.Items.Add(kv.Key);
             cbLangue.SelectedIndex = 6;
+
+            txtTexte_TextChanged(null, null);
         }
 
         private void btDesignerChemin_Click(object sender, EventArgs e)
@@ -67,65 +74,65 @@ namespace TextToSpeech
             return p.StandardOutput.ReadLine();
         }
 
-        private byte[] processTTS(string texte, string authorisation, string languageCode = "fr-FR", string voix = "fr-FR-Wavenet-A", string pitch = "1", string speakingRate = "0.80")
-        {
-            //File.WriteAllText("request.json", "{\"input\":{\"text\":\" " + texte + " \"},\"voice\":{\"languageCode\":\"" + languageCode + "\",\"name\":\"" + voix + "\"},\"audioConfig\":{\"audioEncoding\":\"MP3\",\"pitch\":" + pitch  + ",\"speakingRate\":" + speakingRate + "}}");
+        //private byte[] processTTS(string texte, string authorisation, string languageCode = "fr-FR", string voix = "fr-FR-Wavenet-A", string pitch = "1", string speakingRate = "0.80")
+        //{
+        //    //File.WriteAllText("request.json", "{\"input\":{\"text\":\" " + texte + " \"},\"voice\":{\"languageCode\":\"" + languageCode + "\",\"name\":\"" + voix + "\"},\"audioConfig\":{\"audioEncoding\":\"MP3\",\"pitch\":" + pitch  + ",\"speakingRate\":" + speakingRate + "}}");
+        //
+        //    /*HttpRequestMessage httpRequest = new HttpRequestMessage(HttpMethod.Post, "https://texttospeech.googleapis.com/v1/text:synthesize");
+        //    httpRequest.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authorisation);
+        //    //httpRequest.Content = new Http;
+        //    var values = new Dictionary<string, string>
+        //    {
+        //        { "texte", texte }
+        //    };
+        //
+        //    var content = new FormUrlEncodedContent(values);
+        //    httpRequest.Content = content;
+        //    httpRequest.*/
+        //
+        //    //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://texttospeech.googleapis.com/v1/text:synthesize");
+        //    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(txtURI.Text);
+        //
+        //    string postData = "{\"input\":{\"text\":\" " + texte + " \"},\"voice\":{\"languageCode\":\"" + languageCode + "\",\"name\":\"" + voix + "\"},\"audioConfig\":{\"audioEncoding\":\"MP3\",\"pitch\":" + pitch + ",\"speakingRate\":" + speakingRate + "}}";
+        //    byte[] data = Encoding.UTF8.GetBytes(postData);
+        //
+        //    //request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authorisation);
+        //    request.Headers.Add("Authorization", "Bearer " + authorisation);
+        //    request.Method = "POST";
+        //    request.ContentType = "application/json; charset=utf-8";
+        //    request.ContentLength = data.Length;
+        //
+        //    using (var stream = request.GetRequestStream())
+        //    {
+        //        stream.Write(data, 0, data.Length);
+        //    }
+        //
+        //    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        //    string responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
+        //
+        //    int idxBegin = responseString.IndexOf("\"", responseString.IndexOf("\"audioContent\"") + voix.Length)+1;
+        //    int idxEnd = responseString.LastIndexOf("\"");
+        //
+        //    responseString = responseString.Substring(idxBegin, idxEnd - idxBegin);
+        //
+        //
+        //    /*ProcessStartInfo sinfo = new ProcessStartInfo(
+        //        "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe",
+        //        "Invoke-WebRequest -Method POST -Headers ${" + headers + "} -ContentType: \"application/json; charset=utf-8\" -InFile request.json -Uri \"https://texttospeech.googleapis.com/v1/text:synthesize\" -UseBasicParsing | Select-Object -Expand Content");
+        //    sinfo.CreateNoWindow = true;
+        //    sinfo.UseShellExecute = false;
+        //    sinfo.RedirectStandardOutput = true;
+        //    sinfo.RedirectStandardError = true;
+        //    Process p = System.Diagnostics.Process.Start(sinfo);
+        //    p.WaitForExit();
+        //    string mp3b64 = p.StandardOutput.ReadToEnd();
+        //    string tt = p.StandardError.ReadToEnd();*/
+        //
+        //    //File.Delete("request.json");
+        //
+        //    return Convert.FromBase64String(responseString);
+        //}
 
-            /*HttpRequestMessage httpRequest = new HttpRequestMessage(HttpMethod.Post, "https://texttospeech.googleapis.com/v1/text:synthesize");
-            httpRequest.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authorisation);
-            //httpRequest.Content = new Http;
-            var values = new Dictionary<string, string>
-            {
-                { "texte", texte }
-            };
-
-            var content = new FormUrlEncodedContent(values);
-            httpRequest.Content = content;
-            httpRequest.*/
-
-            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://texttospeech.googleapis.com/v1/text:synthesize");
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(txtURI.Text);
-
-            string postData = "{\"input\":{\"text\":\" " + texte + " \"},\"voice\":{\"languageCode\":\"" + languageCode + "\",\"name\":\"" + voix + "\"},\"audioConfig\":{\"audioEncoding\":\"MP3\",\"pitch\":" + pitch + ",\"speakingRate\":" + speakingRate + "}}";
-            byte[] data = Encoding.UTF8.GetBytes(postData);
-
-            //request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authorisation);
-            request.Headers.Add("Authorization", "Bearer " + authorisation);
-            request.Method = "POST";
-            request.ContentType = "application/json; charset=utf-8";
-            request.ContentLength = data.Length;
-
-            using (var stream = request.GetRequestStream())
-            {
-                stream.Write(data, 0, data.Length);
-            }
-
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            string responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
-
-            int idxBegin = responseString.IndexOf("\"", responseString.IndexOf("\"audioContent\"") + voix.Length)+1;
-            int idxEnd = responseString.LastIndexOf("\"");
-
-            responseString = responseString.Substring(idxBegin, idxEnd - idxBegin);
-
-
-            /*ProcessStartInfo sinfo = new ProcessStartInfo(
-                "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe",
-                "Invoke-WebRequest -Method POST -Headers ${" + headers + "} -ContentType: \"application/json; charset=utf-8\" -InFile request.json -Uri \"https://texttospeech.googleapis.com/v1/text:synthesize\" -UseBasicParsing | Select-Object -Expand Content");
-            sinfo.CreateNoWindow = true;
-            sinfo.UseShellExecute = false;
-            sinfo.RedirectStandardOutput = true;
-            sinfo.RedirectStandardError = true;
-            Process p = System.Diagnostics.Process.Start(sinfo);
-            p.WaitForExit();
-            string mp3b64 = p.StandardOutput.ReadToEnd();
-            string tt = p.StandardError.ReadToEnd();*/
-
-            //File.Delete("request.json");
-
-            return Convert.FromBase64String(responseString);
-        }
-        
         private string ReplaceAll(string str, string from, string to)
         {
             for (string old = null; old != str;)
@@ -160,7 +167,10 @@ namespace TextToSpeech
             if (fnom.ToUpper().EndsWith(".MP3"))
                 fnom = fnom.Substring(0, fnom.Length - ".MP3".Length);
 
-            string authorisation = getAuthorisation();
+            TTS mtts;
+            if(RadBtAzure.Checked) mtts = new TTS(TTS.ECloud.Azure, "fr-FR", null, "1", "0.80", txtGCloud.Text, null, "francecentral");
+            else mtts = mtts = new TTS(TTS.ECloud.Google, "fr-FR", null, "1", "0.80", getAuthorisation(), txtURI.Text, null);
+
             string tts = txtTexte.Text
                 .Replace("\r\n", "\n")
                 .Replace("\n\n", ".")
@@ -218,7 +228,8 @@ namespace TextToSpeech
             for (int i = 0; i < ttsList.Count; ++i)
             {
                 string numb = (delta+i).ToString();
-                byte[] audio = processTTS(ttsList[i], authorisation, cbLangue.Text, cbVoix.Text, txtPitch.Text, txtSpeed.Text);
+                //audio = processTTS(ttsList[i], authorisation, cbLangue.Text, cbVoix.Text, txtPitch.Text, txtSpeed.Text);
+                byte[] audio = mtts.TextToSpeech(ttsList[i]);
                 string zero = (nbChiffre > numb.Length ? new String('0', nbChiffre - numb.Length) : "");
                 File.WriteAllBytes(root + zero + numb + fnom + ".mp3", audio);
                 pbProcess.Value++;
@@ -227,6 +238,14 @@ namespace TextToSpeech
 
             btProcessTTS.Enabled = true;
             pbProcess.Visible = false;
+
+            {
+                string numb = (delta + ttsList.Count).ToString();
+                string zero = (nbChiffre > numb.Length ? new String('0', nbChiffre - numb.Length) : "");
+                txtNumbStart.Text = zero + numb;
+            }
+
+            System.Console.Beep(1500, 500);
         }
 
         private void cbLangue_SelectedIndexChanged(object sender, EventArgs e)
@@ -239,15 +258,52 @@ namespace TextToSpeech
 
         private void txtTexte_TextChanged(object sender, EventArgs e)
         {
-            if(txtTexte.Text != "")
+            try
             {
-                int idx = txtTexte.Text.IndexOf(".");
-                int idx2 = txtTexte.Text.IndexOf("\n");
-                if (idx < 0 || idx > idx2) idx = idx2;
-                idx2 = 20;
-                if (idx < 0 || idx > idx2) idx = idx2;
-                txtNomFichier.Text = txtTexte.Text.Substring(0, idx).Trim();
+                if (txtTexte.Text != "")
+                {
+                    /*int idx = txtTexte.Text.IndexOf(".");
+                    int idx2 = txtTexte.Text.IndexOf("\n");
+                    if (idx < 0 || idx > idx2) idx = idx2;
+                    idx2 = 20;
+                    if (idx < 0 || idx > idx2) idx = idx2;*/
+                    int idx = txtTexte.Text.IndexOf("\n");
+                    if (idx < 0)
+                    {
+                        idx = txtTexte.Text.IndexOf(".");
+                        if (idx < 0) idx = Math.Min(30, txtTexte.Text.Length);
+                    }
+                    idx = Math.Min(idx, Math.Min(30, txtTexte.Text.Length));
+                    string ttl = txtTexte.Text.Substring(0, idx).Trim();
+                    string ttfic;
+
+                    if (ttl.Length > 0 && '0' <= ttl[0] && ttl[0] <= '9')
+                        ttfic = "_" + ttl;
+                    else ttfic = ttl;
+
+                    txtNomFichier.Text = ttfic;
+                }
             }
+            catch
+            {
+
+            }
+            lblNbCar.Text = "Nombre de caractères : \n" + txtTexte.Text.Length;
         }
+
+        /*private void button1_Click(object sender, EventArgs e)
+        {
+            SpeechConfig speechConfig = SpeechConfig.FromSubscription("fd214e837cb44d0280135600ebceaa07", "francecentral");
+            speechConfig.SpeechSynthesisLanguage = "fr-FR";
+            speechConfig.SetSpeechSynthesisOutputFormat(SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3);
+            //AudioConfig audioConfig = AudioConfig.;
+            //AudioProcessingOptions audioProcessingOptions = null;
+            SpeechSynthesizer speechSynthesizer = new SpeechSynthesizer(speechConfig);
+            Task<SpeechSynthesisResult> tache = speechSynthesizer.SpeakTextAsync("Bonjour, je suis la synthèse vocal d'Azure. Bienvenue !");
+            tache.Wait();
+            File.WriteAllBytes("test.mp3", tache.Result.AudioData);
+            //Microsoft.CognitiveServices.Speech.Audio.
+            //Microsoft.CognitiveServices.Speech.SpeechSynthesizer();
+        }*/
     }
 }
